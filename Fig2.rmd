@@ -1,98 +1,54 @@
 ---
 title: "Figure 2"
-output: html_notebook
+output:
+  html_document:
+    keep_md: yes
 ---
 
-Setup:
-```{r}
-library(Seurat)
+```{r setup, include=FALSE}
 here::i_am('Fig2.rmd')
+knitr::opts_knit$set(root.dir = here::here())
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+options('plots'=NULL)
+```
+Setup:
+```{r, echo=FALSE}
+library(Seurat)
+source(file.path(here::here(), 'utils.R'))
 ```
 
-Utility Functions:
-```{r}
-
-load_as_seurat <- function(name){
-    require(dplyr)
-    exp <- Read10X(file.path(here::here(), '..', 'data', name))
-    obj <- CreateSeuratObject(counts = exp)
-    meta.data <- read.csv(file.path(here::here(), '..', 'data', name, 'metadata.csv'))
-    rownames(meta.data) <- meta.data$X
-    obj <- AddMetaData(obj, dplyr::select(meta.data, -X))
-    umap <- read.csv(file.path(here::here(), '..', 'data', name, 'umap.csv'))
-    rownames(umap) <- umap$X
-    obj[['umap']] <- CreateDimReducObject(embeddings = as.matrix(dplyr::select(umap, -X)), key = "UMAP_")
-    obj <- NormalizeData(obj) %>% FindVariableFeatures(., nfeatures=2500) %>% ScaleData()
-    return(obj)
-}
-
-cd_hfd_de <- function(obj){
-    # obj <- subset(obj, subset=Genotype == '5xFAD')
-    # obj <- subset(obj, subset=orig.ident == 640, invert=TRUE)
-    Idents(obj) <- obj$Diet
-
-    future::plan('multicore', workers = 4)
-    m <- FindMarkers(obj, assay='RNA', test.use='MAST', latent.vars=c('Batch'),
-                         ident.1='HFD', ident.2='CD', logfc.threshold=0)
-    future::plan('sequential')
-
-    m$gene <- rownames(m)
-    m <- m[-grep('^Gm|Rik$', m$gene), ]
-    m$qvalue <- p.adjust(m$p_val, 'fdr')
-    return(m)
-}
-
-VolcanoPlot <- function(m, FC = 0.25, pval = 0.01, tname = '') {
-    require(ggrepel)
-    eps <- 1e-500
-
-    volc <- ggplot(m, aes(x = avg_log2FC, y = -log(p_val_adj + eps))) +
-        geom_point(size = 0.5) +
-        ggtitle(label = '', subtitle = tname) +
-        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-              panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-    volc <- volc +
-        geom_text_repel(data = m[m$avg_log2FC > FC & m$p_val_adj < pval,], aes(label = gene), size = 3, color = "steelblue4") +
-        geom_text_repel(data = m[m$avg_log2FC < -FC & m$p_val_adj < pval,], aes(label = gene), size = 3, color = "plum4")
-    return(volc)
-}
-
-data.names.map <- c(all = 'ALL', DGs = 'DG',  Microglia = 'MG', Astrocytes = 'AST', Oligodendrocytes = 'OLG')
-
-```
 Panel a
-```{r}
+```{r, fig.width = 10}
 obj <- load_as_seurat('ALL')
 DimPlot(obj, group.by='CellType', label=TRUE) + NoLegend()
 ```
-Panels b, c, d
+Panels b, c
+```{r, fig.width = 15, results='hide' ,fig.keep='all'}
+plot_cell_type('DGs')
+```
+Panel d
 ```{r}
+#OR
+```
+Panels e,f
+```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+plot_cell_type('Microglia')
+```
+Panels e,f
+```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+plot_cell_type('Astrocytes')
+```
+Panels e,f
+```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+plot_cell_type('Oligodendrocytes')
 ```
 Panels k,l,m
-```{r}
-obj <- load_as_seurat('ALL')
-obj <- subset(obj, subset = Genotype == '5xFAD')
-
+```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
 volcs <- lapply(names(data.names.map[3:length(data.names.map)]), function(cell.type){
-    obj <- subset(obj, subset = CellType == cell.type)
+    obj <- load_as_seurat(data.names.map[[cell.type]])
     degs <- cd_hfd_de(obj)
-    write.csv(degs, paste0(cell.type, '2.csv'))
     return(VolcanoPlot(degs, tname=paste(cell.type, '5xFAD','HFD vs CD', sep=' ,')))
 })
-
-
-volcs <-lapply(names(data.names.map[3:length(data.names.map)]), function(cell.type){
-    s.obj <- readRDS(file.path(here::here(), '..', 'data', 'SeuratObjects', paste0(cell.type, '_ad.rds')))
-    degs <- cd_hfd_de(s.obj)
-    write.csv(degs, paste0(cell.type, 'old.csv'))})
-#     return(VolcanoPlot(degs, tname=paste(cell.type, '5xFAD','HFD vs CD', sep=' ,')))
-# })
-
-volcs <-lapply(names(data.names.map[3:length(data.names.map)]), function(cell.type){
-    degs <- read.csv(paste0(cell.type, '3.csv'))
-    return(VolcanoPlot(degs, tname=paste(cell.type, '5xFAD','HFD vs CD', sep=' ,')))
-})
-
+cowplot::plot_grid(plotlist=volcs, nrow=1)
 ```
 

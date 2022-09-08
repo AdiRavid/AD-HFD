@@ -1,0 +1,21 @@
+---
+title: "Figure 2"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+here::i_am('Ex.Fig4.rmd')
+knitr::opts_knit$set(root.dir = here::here())
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+options('plots'=NULL)
+```
+Setup:
+```{r, echo=FALSE}
+library(Seurat)
+source(file.path(here::here(), 'utils.R'))
+```
+Panels a,b
+```{r}
+obj <- load_as_seurat('ALL_pre_filt')
+p1 <- DimPlot(obj, label=TRUE) + NoLegend()
+```

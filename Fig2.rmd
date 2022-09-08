@@ -1,8 +1,6 @@
 ---
 title: "Figure 2"
-output:
-  html_document:
-    keep_md: yes
+output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -18,32 +16,32 @@ source(file.path(here::here(), 'utils.R'))
 ```
 
 Panel a
-```{r, fig.width = 10}
+```{r, a, fig.width = 10}
 obj <- load_as_seurat('ALL')
 DimPlot(obj, group.by='CellType', label=TRUE) + NoLegend()
 ```
 Panels b, c
-```{r, fig.width = 15, results='hide' ,fig.keep='all'}
+```{r, b-c, fig.width = 15, results='hide' ,fig.keep='all'}
 plot_cell_type('DGs')
 ```
 Panel d
-```{r}
+```{r, d}
 #OR
 ```
 Panels e,f
-```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+```{r, e-f, fig.width = 15 ,results='hide' ,fig.keep='all'}
 plot_cell_type('Microglia')
 ```
-Panels e,f
-```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+Panels g,h
+```{r, g-h, fig.width = 15 ,results='hide' ,fig.keep='all'}
 plot_cell_type('Astrocytes')
 ```
-Panels e,f
-```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+Panels i,j
+```{r, i-j, fig.width = 15 ,results='hide' ,fig.keep='all'}
 plot_cell_type('Oligodendrocytes')
 ```
 Panels k,l,m
-```{r, fig.width = 15 ,results='hide' ,fig.keep='all'}
+```{r, k-l-m, fig.width = 15 ,results='hide' ,fig.keep='all'}
 volcs <- lapply(names(data.names.map[3:length(data.names.map)]), function(cell.type){
     obj <- load_as_seurat(data.names.map[[cell.type]])
     degs <- cd_hfd_de(obj)

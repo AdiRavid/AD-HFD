@@ -1,59 +1,53 @@
----
-title: "Figure 2"
-output:
-  html_document:
-    keep_md: yes
-  pdf_document: default
----
-
+Figure 2
+================
 
 Setup:
 
-
 Panel a
 
-```r
+``` r
 obj <- load_as_seurat('ALL')
 DimPlot(obj, group.by='CellType', label=TRUE) + NoLegend()
 ```
 
-![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-gfm/a-1.png)<!-- -->
 Panels b, c
 
-```r
+``` r
 plot_cell_type('DGs')
 ```
 
-![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-gfm/b-c-1.png)<!-- -->
 Panel d
 
-```r
+``` r
 #OR
 ```
+
 Panels e,f
 
-```r
+``` r
 plot_cell_type('Microglia')
 ```
 
-![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
-Panels e,f
+![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-gfm/e-f-1.png)<!-- -->
+Panels g,h
 
-```r
+``` r
 plot_cell_type('Astrocytes')
 ```
 
-![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
-Panels e,f
+![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-gfm/g-h-1.png)<!-- -->
+Panels i,j
 
-```r
+``` r
 plot_cell_type('Oligodendrocytes')
 ```
 
-![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-gfm/i-j-1.png)<!-- -->
 Panels k,l,m
 
-```r
+``` r
 volcs <- lapply(names(data.names.map[3:length(data.names.map)]), function(cell.type){
     obj <- load_as_seurat(data.names.map[[cell.type]])
     degs <- cd_hfd_de(obj)
@@ -62,5 +56,4 @@ volcs <- lapply(names(data.names.map[3:length(data.names.map)]), function(cell.t
 cowplot::plot_grid(plotlist=volcs, nrow=1)
 ```
 
-![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-
+![](/Volumes/habib-lab/adi.ravid/AD-HFD/AD-HFD/Fig2_files/figure-gfm/k-l-m-1.png)<!-- -->

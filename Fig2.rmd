@@ -1,7 +1,9 @@
 ---
 title: "Figure 2"
-output: rmarkdown::github_document
----
+output:
+  github_document:
+    html_preview: false
+------
 
 ```{r setup, include=FALSE}
 here::i_am('Fig2.rmd')
